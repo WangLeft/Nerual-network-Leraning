@@ -1,63 +1,75 @@
 import torch
 import torchvision
-from torch.utils.data import DataLoader, Dataset
-from torchvision import transforms
-
 import matplotlib.pyplot as plt
-import numpy as np
 
-import gzip
-import os
+import datainit as datainit
+import main_CNN as cnn
+from datainit import Batch_Size
+
 
 #如果网络能在GPU中训练，就使用GPU；否则使用CPU进行训练
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
+train_loader, test_loader = datainit.dataInit('Dataset','train-images-idx3-ubyte.gz','train-labels-idx1-ubyte.gz','t10k-images-idx3-ubyte.gz','t10k-labels-idx1-ubyte.gz')
 
-class DealDataset(Dataset):
+#########  全局  #########
+Batch_Size = Batch_Size
+EPOCHS = 4
+##########################
 
-    # 类的实例化操作会自动调用该方法
-    def __init__(self, dataset_folder, dataset_data, dataset_label, transform) -> None:
+net = cnn.Net().to(device)
 
-        (train_set, train_label) = load_data(dataset_folder, dataset_data, dataset_label)
-        self.train_set = train_set
-        self.train_label = train_label
-        self.transform = transform
+# cnn.oneEpoch(EPOCHS, net, train_loader, test_loader, device)
+pth = torch.load("./RNN_MNIST_Identify/netpar.pth")
+net.load_state_dict(pth)
+# net.load_state_dict({k.replace('module.',''):v for k,v in torch.load("./RNN_MNIST_Identify/netpar.pth")})
+net.train(False)
+correct, testAccuracy = 0, 0
+with torch.no_grad():
+    for batch_idx, (testImgs, labels) in enumerate(test_loader):
+        if batch_idx == 1:
+            testImgs = testImgs.to(device)
+            labels = labels.to(device)
+            outputs = net(testImgs)
+            predictions = torch.argmax(outputs,dim = 1)
 
-    def __getitem__(self, index):
-        img, target = self.train_set[index], int(self.train_labels[index])
-        if self.transform is not None:
-            img = self.transform(img)
-        return img, target
+            correct += torch.sum(predictions == labels)
 
-    def __len__(self):
-        return len(self.train_label)
+            testAccuracy = correct/(Batch_Size )
+
+            img = torchvision.utils.make_grid(testImgs)
+            print(predictions)
+            print(labels)
+
+# examples = enumerate(test_loader)
+# batch_idx, (example_data, example_targets) = next(examples)
+# with torch.no_grad():
+#   output = network(example_data)
+# fig = plt.figure()
+# for i in range(6):
+#   plt.subplot(2,3,i+1)
+#   plt.tight_layout()
+#   plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
+#   plt.title("Prediction: {}".format(
+#     output.data.max(1, keepdim=True)[1][i].item()))
+#   plt.xticks([])
+#   plt.yticks([])
+# plt.show()
 
 
-def load_data(dataset_folder, dataset_data, dataset_label):
 
-    # with 语句用于在代码块执行完毕后自动执行清理操作，例如关闭文件、释放锁等等
-    # with 语句使用上下文管理器对象,可以避免遗漏关闭文件、释放锁等操作，提高可靠性和安全性
 
-    # os.path.join用于拼接文件路径
-    with gzip.open(os.path.join(".", dataset_folder, dataset_label), 'rb') as labelpath:
-        # np.frombuffer 可以将一个字符串或字节对象转换成 NumPy 数组
-        y_train = np.frombuffer(labelpath.read(), np.uint8, offset=4)
-    with gzip.open(os.path.join(".", dataset_folder, dataset_data), 'rb') as imgpath:
-        # 一起使用可以将一个字符串或字节对象转换为指定形状的 NumPy 数组
-        x_train = np.frombuffer(imgpath.read(), np.uint8, offset=16).reshape(len(y_train), 28, 28)
 
-    # x自变量-图片 ; y结果-标签
-    return (x_train, y_train)
 
-# trainDataset = DealDataset("Dataset", "t10k-images-idx3-ubyte.gz", "t10k-labels-idx1-ubyte.gz", transform=transforms.ToTensor())
 
-# train_loader = torch.utils.data.DataLoader(
-#     dataset=trainDataset,
-#     batch_size=10, # 一个批次可以认为是一个包，每个包中含有10张图片
-#     shuffle=False,
-# )
 
-# # 实现单张图片可视化
+
+
+
+
+
+# 实现单张图片可视化
+# 下面用到了__getitem__
 # images, labels = next(iter(train_loader))
 # img = torchvision.utils.make_grid(images)
 
@@ -68,13 +80,3 @@ def load_data(dataset_folder, dataset_data, dataset_label):
 # print(labels)
 # plt.imshow(img)
 # plt.show()
-
-# path = os.path.join("./Others", "RMI_IF.png")
-
-if os.path.exists("README_RMI.md"):
-    print("File or directory exists")
-else:
-    print("File or directory does not exist")
-
-# script_dir = os.path.dirname(os.path.abspath(__file__))
-# print(script_dir)
