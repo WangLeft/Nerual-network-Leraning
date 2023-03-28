@@ -12,7 +12,28 @@
 · Image 文件内容：offset=16 前 16 位跳过不读，后面为图片像素*28*28
 ![这是图片](./Others/RMI_IF.png "IF")
 · Lable 文件内容：offset=4 前 4 位跳过不读，后面为标签 - byte 0~9
-![这是图片](./Others/RMI_LF.png "IF")
+![这是图片](./Others/RMI_LF.png "LF")
+
+## **CNN 可视化**
+
+https://poloclub.github.io/cnn-explainer/
+
+## **RNN **·
+
+![这是图片](./Others/RMI_rnn.png "RNN")
+
+-   BatchSize — 批量大小
+-   SeqLen — 样本数量
+-   InputSize — 输入维度
+-   HiddenSize — 隐藏层（输出）维度
+
+---
+
+    input.shape = (batch_size, input_size)    output.shape = (batch_size, hidden_size)
+    -->
+    dataset.shape = (seqlen, batch_size, hidden_size)
+
+---
 
 ## **小注**
 

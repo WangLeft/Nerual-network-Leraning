@@ -59,6 +59,7 @@ def  dataInit(dataset_folder, dataset_data,
         shuffle=False,
     )
 
+
     if(isPrint):
         print("训练集样本和标签的大小:", trainDataset.train_set.shape,trainDataset.train_label.shape)
         # #查看数据，例如训练集中第一个样本的内容和标签

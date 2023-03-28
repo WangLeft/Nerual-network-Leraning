@@ -102,7 +102,7 @@ def drawline(history):
     plt.show()
 
 def netsave(net):
-    torch.save(net.state_dict(), './RNN_MNIST_Identify/netpar.pth')
+    torch.save(net.state_dict(), './RNN_MNIST_Identify/netCNNstate.pth')
 
 # def train( model, device, train_loader, optimizer, epoch):
 #     """训练网络:
