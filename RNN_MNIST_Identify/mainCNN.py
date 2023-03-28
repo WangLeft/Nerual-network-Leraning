@@ -1,7 +1,7 @@
 import torch
 from datainit import Batch_Size
 from tqdm import tqdm
-import matplotlib.pyplot as plt
+import tools
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -33,7 +33,7 @@ class Net(torch.nn.Module):
         return output
 
 
-def oneEpoch(EPOCHS, net, trainDataLoader, testDataLoader, device):
+def oneEpoch(EPOCHS, net, trainDataLoader, testDataLoader, device, savepath):
     history = {'Test Loss':[],'Test Accuracy':[]}
 
     lossF = torch.nn.CrossEntropyLoss()
@@ -83,84 +83,5 @@ def oneEpoch(EPOCHS, net, trainDataLoader, testDataLoader, device):
                                     (epoch,EPOCHS,loss.item(),accuracy.item(),testLoss.item(),testAccuracy.item()))
                 processBar.close()
 
-    drawline(history)
-    netsave(net)
-
-def drawline(history):
-    plt.plot(history['Test Loss'],label = 'Test Loss')
-    plt.legend(loc='best')
-    plt.grid(True)
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.show()
-
-    plt.plot(history['Test Accuracy'],color = 'red',label = 'Test Accuracy')
-    plt.legend(loc='best')
-    plt.grid(True)
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.show()
-
-def netsave(net):
-    torch.save(net.state_dict(), './RNN_MNIST_Identify/netCNNstate.pth')
-
-# def train( model, device, train_loader, optimizer, epoch):
-#     """训练网络:
-#     model(net) 为定义的模型； device 为用到的设备； train_loader 为训练数据；
-#     optimizer 为权值更新方式； epoch 为训练的轮数"""
-
-#     lossF = torch.nn.CrossEntropyLoss()
-#     optimizer = torch.optim.Adam(model.parameters())
-
-#     model.train()
-#     # PyTorch 只接收 batch 作为输入数据，即输入是一个四维数组（nSamples*nChannels*Height*Weight）
-#     # 每一次循环就是一个batch
-#     for batch_idx, (data, target) in enumerate(train_loader):
-#         # 数据给到指定设备 CPU/GPU
-#         data, target = data.to(device), target.to(device)
-#         optimizer.zero_grad()
-#         output = model(data)
-#         loss = lossF(output, target)  # 这里使用交叉熵代价函数
-#         loss.backward()  # 反向传播
-#         optimizer.step()  # 更新
-#         # print(batch_idx)
-#          # 输出日志
-#         if batch_idx == len(train_loader.dataset)/(Batch_Size)-1:
-#             print(
-#                 "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss:{:.6f}".format(
-#                     epoch,
-#                     batch_idx * len(data),
-#                     len(train_loader.dataset),
-#                     100.0 * batch_idx / len(train_loader),
-#                     loss.item(),
-#                 )
-#             )
-
-# def test(model, device, test_loader, history):
-#     """测试网络
-#     args 命令行参数； model 定义的模型； device 用到的设备；n test_loader 测试数据；
-#     """
-#     model.eval()  # 指定模型为测试模式
-#     test_loss = 0
-#     correct = 0
-
-#     # 无梯度模式，具体看 PyTorch 的自动求导机制文档
-#     with torch.no_grad():
-#         for data, target in test_loader:
-#             data, target = data.to(device), target.to(device)
-#             output = model(data)
-#             test_loss += lossF(output, target)
-#             pred = output.argmax(dim=1, keepdim=True)
-#             correct += pred.eq(target.view_as(pred)).sum().item()
-
-#     test_loss /= len(test_loader.dataset)
-#     history['Test Loss'].append(test_loss)
-#     history['Test Accuracy'].append(correct)
-#     print(
-#         "\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n".format(
-#             test_loss,
-#             correct,
-#             len(test_loader.dataset),
-#             100.0 * correct / len(test_loader.dataset),
-#         )
-#     )
+    tools.drawline(history)
+    tools.netsave(net, savepath)
