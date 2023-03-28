@@ -29,7 +29,7 @@
 
 https://poloclub.github.io/cnn-explainer/
 
-## **RNN **·
+## **RNN**
 
 ![这是图片](./Others/RMI_rnn.png "RNN")
 
@@ -48,7 +48,7 @@ https://poloclub.github.io/cnn-explainer/
 
 ## **小注**
 
-### **_1. transforms.ToTensor()_**
+### **1.**
 
 ### **_2. transforms.ToTensor()_**
 
