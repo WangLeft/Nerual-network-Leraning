@@ -1,5 +1,10 @@
 # 利用 RNN 网终实现 MINIST 手写体数字库的识别
 
+运行 main.py -- netMain(isRNN = True, isTrain = False)
+
+-   isRNN(True:RNN; False:CNN)
+-   isTrain(True:训练+评估; False:利用保存参数评估)
+
 ## **MNIST 数据集**
 
 | 名称                       | 大小     | 内容                          |
@@ -13,6 +18,12 @@
 ![这是图片](./Others/RMI_IF.png "IF")
 · Lable 文件内容：offset=4 前 4 位跳过不读，后面为标签 - byte 0~9
 ![这是图片](./Others/RMI_LF.png "LF")
+
+## **RNN 实验结果**
+
+· 横纵坐标可能有误
+![这是图片](./Others/RNN_A.png "a")
+![这是图片](./Others/RNN_L.png "l")
 
 ## **CNN 可视化**
 
